@@ -7,7 +7,7 @@ const filesToCache = [
   'pages/404.html'
 ];
 
-const staticCacheName = 'pages-cache-v1';
+const staticCacheName = 'pages-cache-v2';
 
 self.addEventListener('install', event => {
   console.log('Attempting to install service worker and cache static assets');
@@ -43,6 +43,24 @@ self.addEventListener('fetch', event => {
     }).catch(error => {
       console.log('Error, ', error);
       return caches.match('pages/offline.html')
+    })
+  );
+});
+
+self.addEventListener('activate', event => {
+  console.log('Activating new service worker...');
+
+  const cacheWhiteList = [staticCacheName];
+
+  event.waitUntil(
+    caches.keys().then(cacheNames => {
+      return Promise.all(
+        cacheNames.map(cacheName => {
+          if (cacheWhiteList.indexOf(cacheName) === -1) {
+            return caches.delete(cacheName);
+          }
+        })
+      )
     })
   );
 });
