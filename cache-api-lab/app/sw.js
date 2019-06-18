@@ -41,7 +41,8 @@ self.addEventListener('fetch', event => {
         })
       });
     }).catch(error => {
-      // TODO: Respond with custom offline
+      console.log('Error, ', error);
+      return caches.match('pages/offline.html')
     })
   );
 });
