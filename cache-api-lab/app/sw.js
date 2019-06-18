@@ -30,11 +30,14 @@ self.addEventListener('fetch', event => {
       }
 
       console.log('Network request for ', event.request.url);
-      return fetch(event.request);
+      return fetch(event.request).then(response => {
+        cache.put(event.request.url, response.clone());
 
-      // TODO: Add fetched files to the cache.
+        return response;
+      });
     }).catch(error => {
-      // TODO: Respond with custom offline page.
+
+      // TODO: Respond with custom offline
     })
   );
 });
