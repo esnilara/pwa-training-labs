@@ -31,12 +31,16 @@ self.addEventListener('fetch', event => {
 
       console.log('Network request for ', event.request.url);
       return fetch(event.request).then(response => {
-        cache.put(event.request.url, response.clone());
+        if (response.status === 404) {
+          return caches.match('pages/404.html');
+        }
 
-        return response;
+        return caches.open(staticCacheName).then(cache => {
+          cache.put(event.request.url, response.clone());
+          return response;
+        })
       });
     }).catch(error => {
-
       // TODO: Respond with custom offline
     })
   );
